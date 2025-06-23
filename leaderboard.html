@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leaderboard - Pudgy Pairs</title>
+    <style>
+        @font-face {
+            font-family: 'Fobble';
+            src: url('fobble.otf') format('truetype');
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            font-family: 'Fobble', 'Comic Sans MS', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            background-image: url('huddle.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+        #logo {
+            width: 500px;
+            height: auto;
+            margin-top: 10vh;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        #logo img {
+            max-width: 100%;
+            height: auto;
+        }
+        #leaderboard-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            font-size: 24px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Fobble', 'Comic Sans MS', sans-serif;
+        }
+        #leaderboard-btn:hover {
+            background-color: #45a049;
+        }
+        #leaderboard-content {
+            text-align: center;
+            margin-top: 20px;
+            background-color: rgba(240, 240, 240, 0.8);
+            padding: 20px;
+            border-radius: 5px;
+        }
+        #return-button {
+            padding: 20px 40px; /* Increased by 100% from 10px 20px */
+            font-size: 32px; /* Increased by 100% from 16px */
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Fobble', 'Comic Sans MS', sans-serif;
+            margin-top: 20px;
+        }
+        #return-button:hover {
+            background-color: #45a049;
+        }
+        #music-player {
+            margin-top: 30px;
+            text-align: center;
+            background-color: rgba(240, 240, 240, 0.8);
+            padding: 20px;
+            border-radius: 5px;
+        }
+        #music-player audio {
+            width: 100%;
+            max-width: 400px;
+        }
+        #track-title {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        #controls button {
+            padding: 10px 20px;
+            font-size: 16px;
+            margin: 0 5px;
+        }
+        #play-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Fobble', 'Comic Sans MS', sans-serif;
+            margin-top: 10px;
+        }
+        #play-button:hover {
+            background-color: #45a049;
+        }
+        #donation-text {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 18px;
+            background-color: rgba(240, 240, 240, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #donation-text span {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <button id="leaderboard-btn" onclick="window.location.href='index.html'">Return to Game</button>
+    <div id="logo">
+        <img src="logo.png" alt="Game Logo">
+    </div>
+    <div id="leaderboard-content">
+        <!-- Add your leaderboard logic or static content here -->
+        <h2>Leaderboard</h2>
+        <p>(Leaderboard data would be populated dynamically)</p>
+    </div>
+    <button id="return-button" onclick="window.location.href='index.html'">Return to Game</button>
+    <div id="music-player">
+        <div id="track-title">Track 1</div>
+        <audio id="audio-player" controls></audio>
+        <div id="controls">
+            <button onclick="previousTrack()">Previous</button>
+            <button onclick="playPause()">Play/Stop</button>
+            <button onclick="nextTrack()">Next</button>
+        </div>
+        <button id="play-button" onclick="loadTrack(0)">Play Music</button>
+    </div>
+    <div id="donation-text">
+        <span>donation address: 0x4b3AebD3eE185B98369549a7b6484A43F737a3d6</span>
+        <span style="text-align: center;">Please help me avoid having to start an OnlyFans haha</span>
+        <img src="images/onlyfans.png" alt="OnlyFans" style="max-width: 100px; height: auto; display: block; margin: 10px auto;">
+    </div>
+
+    <script>
+        // Tracklist placeholder (replace with actual titles from https://open.spotify.com/album/3azlxVDPWd7StKlZ88wC5x)
+        const tracks = [
+            "Track 1", "Track 2", "Track 3", "Track 4", "Track 5",
+            "Track 6", "Track 7", "Track 8", "Track 9", "Track 10",
+            "Track 11", "Track 12", "Track 13", "Track 14", "Track 15",
+            "Track 16", "Track 17", "Track 18", "Track 19", "Track 20",
+            "Track 21", "Track 22"
+        ];
+        let currentTrack = 0;
+        const audioPlayer = document.getElementById('audio-player');
+        const trackTitle = document.getElementById('track-title');
+
+        // Set initial track and attempt autostart
+        function loadTrack(index) {
+            if (index >= 0 && index < tracks.length) {
+                currentTrack = index;
+                audioPlayer.src = `music/track${index + 1}.mp3`; // Adjust path based on your server
+                trackTitle.textContent = tracks[index];
+                audioPlayer.load();
+                audioPlayer.play().catch(error => {
+                    console.log("Autoplay blocked by browser:", error);
+                    document.getElementById('play-button').style.display = 'block';
+                }); // Attempt autostart with error handling
+            }
+        }
+
+        // Play/Pause functionality (using 'stop' as requested)
+        function playPause() {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+            } else {
+                audioPlayer.pause(); // Acts as 'stop' since HTML5 audio stops on pause
+            }
+        }
+
+        // Previous track
+        function previousTrack() {
+            loadTrack(currentTrack - 1);
+            audioPlayer.play();
+        }
+
+        // Next track
+        function nextTrack() {
+            loadTrack(currentTrack + 1);
+            audioPlayer.play();
+        }
+
+        // Load first track on page load and attempt autostart
+        window.onload = () => {
+            document.getElementById('play-button').style.display = 'none'; // Hide play button initially
+            loadTrack(0);
+        };
+    </script>
+</body>
+</html>

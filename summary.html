@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Summary - Pudgy Pairs</title>
+    <style>
+        @font-face {
+            font-family: 'Fobble';
+            src: url('fobble.otf') format('truetype');
+        }
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            min-height: 100vh;
+            font-family: 'Fobble', 'Comic Sans MS', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            background-image: url('huddle.jpg');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+        #leaderboard-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            padding: 10px 20px;
+            font-size: 24px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Fobble', 'Comic Sans MS', sans-serif;
+        }
+        #leaderboard-btn:hover {
+            background-color: #45a049;
+        }
+        #summary-content {
+            text-align: center;
+            background-color: rgba(240, 240, 240, 0.8);
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        #finish-image img {
+            max-width: 200px;
+            height: auto;
+            margin-bottom: 20px;
+        }
+        #summary-details p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        #submit-form {
+            margin-top: 20px;
+            text-align: center;
+        }
+        #submit-form input {
+            font-size: 18px;
+            padding: 5px;
+            maxlength: 30;
+            width: 200px;
+            font-family: 'Fobble', 'Comic Sans MS', sans-serif;
+        }
+        #submit-form button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Fobble', 'Comic Sans MS', sans-serif;
+        }
+        #submit-form button:hover {
+            background-color: #45a049;
+        }
+        #return-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Fobble', 'Comic Sans MS', sans-serif;
+            margin-top: 20px;
+        }
+        #return-button:hover {
+            background-color: #45a049;
+        }
+        #donation-text {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 18px;
+            background-color: rgba(240, 240, 240, 0.8);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        #donation-text span {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <button id="leaderboard-btn" onclick="window.location.href='leaderboard.html'">Leaderboard</button>
+    <div id="summary-content">
+        <div id="finish-image"></div>
+        <div id="summary-details"></div>
+        <div id="submit-form">
+            <input type="text" id="player-name" maxlength="30" placeholder="Enter your name (max 30 chars)">
+            <button onclick="submitScore()">Submit</button>
+        </div>
+    </div>
+    <button id="return-button" onclick="window.location.href='index.html'">Return to Game</button>
+    <div id="donation-text">
+        <span>donation address: 0x4b3AebD3eE185B98369549a7b6484A43F737a3d6</span>
+        <span style="text-align: center;">Please help me avoid having to start an OnlyFans haha</span>
+        <img src="images/onlyfans.png" alt="OnlyFans" style="max-width: 100px; height: auto; display: block; margin: 10px auto;">
+    </div>
+
+    <script>
+        // Parse URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const time1 = urlParams.get('time1');
+        const time2 = urlParams.get('time2');
+        const time3 = urlParams.get('time3');
+        const avg = urlParams.get('avg');
+        const wrongClicks = urlParams.get('wrongClicks');
+        const finishImage = urlParams.get('finishImage');
+
+        // Display summary
+        const finishImageDiv = document.getElementById('finish-image');
+        const summaryDetailsDiv = document.getElementById('summary-details');
+        if (finishImageDiv && summaryDetailsDiv) {
+            finishImageDiv.innerHTML = `<img src="images/${finishImage}" alt="Finish" style="max-width: 200px; height: auto;">`;
+            summaryDetailsDiv.innerHTML = `
+                <p>ROUND 1: ${time1}ms</p>
+                <p>ROUND 2: ${time2}ms</p>
+                <p>ROUND 3: ${time3}ms</p>
+                <p>avg cumulative time: ${avg}ms</p>
+                <p style="color: red;">wrong clicks: ${wrongClicks}</p>
+            `;
+        } else {
+            console.error("Summary elements not found");
+        }
+
+        function submitScore() {
+            const playerName = document.getElementById("player-name").value.trim();
+            if (playerName && playerName.length <= 30) {
+                const entry = {
+                    name: playerName,
+                    times: [parseInt(time1), parseInt(time2), parseInt(time3)],
+                    avg: parseFloat(avg)
+                };
+                let leaderboard = JSON.parse(localStorage.getItem('leaderboard') || '[]');
+                leaderboard.push(entry);
+                localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
+                console.log('Leaderboard saved:', leaderboard);
+                alert("Score submitted! Returning to game...");
+                window.location.href = 'index.html';
+            } else {
+                alert("Please enter a name between 1 and 30 characters.");
+            }
+        }
+    </script>
+</body>
+</html>
